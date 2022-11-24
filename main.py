@@ -4,27 +4,20 @@ Turing Impmentation in Python.
 @Date: Nove 24 2022
 """
 
-N = 5  # tape length, initialize to a large value
-
-
 class TuringMachine:
     """
     initialize the Turing Machine, read the program and input
     """
 
-    def __init__(self, program, input, state=0):
+    def __init__(self, program, input, N, state=0):
         self.trf = {}
         self.state = str(state)
         self.tape = ''.join(['_'] * N)
         self.head = N // 2  # head is positioned in the middle
         self.tape = self.tape[:self.head] + input + self.tape[self.head:]
-        for line in program.splitlines():
+        for line in program:
             s, a, r, d, s1 = list(line)
             self.trf[s, a] = (r, d, s1)
-
-    """
-    step through a program
-    """
 
     def step(self):
         if self.state != 'H':
@@ -37,11 +30,7 @@ class TuringMachine:
                 if d != '*':
                     self.head = self.head + (1 if d == 'r' else -1)
                 self.state = s1
-                print(self.tape.replace('_', ''), self.state)
-
-    """
-    run a program
-    """
+                print(self.state + ": " + self.tape.replace('_', '') )
 
     def run(self, max_iter=9999):
         i = 0
@@ -52,13 +41,12 @@ class TuringMachine:
 
 
 if __name__ == "__main__":
-    global N
     print("Reading TM.txt...")
-    program = open('TM.txt').readlines()
-    N = program[0]
+    program = open('TM.txt').read().splitlines()
+    N = int(program[0])
     S = program[1]
     program = program[2:]
     initial_input = input("Enter the starting tape with one leading and one trailing blank (_): ")
     print("Processing...")
-    tm = TuringMachine(program, initial_input)
+    tm = TuringMachine(program, initial_input, N)
     tm.run()
